@@ -22,8 +22,9 @@
     <version>58</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
+  <groupId>com.github.nbauma109</groupId>
   <artifactId>commons-collections4</artifactId>
-  <version>4.5-RC3</version>
+  <version>4.5-RC4</version>
   <name>Apache Commons Collections</name>
 
   <inceptionYear>2001</inceptionYear>
