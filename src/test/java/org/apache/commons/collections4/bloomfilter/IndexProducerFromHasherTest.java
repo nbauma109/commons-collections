@@ -16,27 +16,26 @@
  */
 package org.apache.commons.collections4.bloomfilter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+public class IndexProducerFromHasherTest extends AbstractIndexProducerTest {
 
-import org.junit.jupiter.api.Test;
-
-/**
- * Tests for the {@link SimpleBloomFilter}.
- */
-public class SimpleBloomFilterTest extends AbstractBloomFilterTest<SimpleBloomFilter> {
     @Override
-    protected SimpleBloomFilter createEmptyFilter(final Shape shape) {
-        return new SimpleBloomFilter(shape);
+    protected int getAsIndexArrayBehaviour() {
+        return 0;
     }
 
-    @Test
-    public void testMergeShortBitMapProducer() {
-        final SimpleBloomFilter filter = createEmptyFilter(getTestShape());
-        // create a producer that returns too few values
-        // shape expects 2 longs we are sending 1.
-        final BitMapProducer producer = p -> p.test(2L);
-        assertTrue(filter.merge(producer));
-        assertEquals(1, filter.cardinality());
+    @Override
+    protected IndexProducer createProducer() {
+        // hasher has collisions and wraps
+        return new IncrementingHasher(4, 8).indices(Shape.fromKM(17, 72));
+    }
+
+    @Override
+    protected IndexProducer createEmptyProducer() {
+        return NullHasher.INSTANCE.indices(Shape.fromKM(17, 72));
+    }
+
+    @Override
+    protected int[] getExpectedIndices() {
+        return new int[] {4, 12, 20, 28, 36, 44, 52, 60, 68, 4, 12, 20, 28, 36, 44, 52, 60};
     }
 }

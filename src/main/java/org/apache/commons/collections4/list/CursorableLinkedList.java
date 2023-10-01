@@ -285,7 +285,7 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
             if (cur == null) {
                 // some other unrelated cursor object has been
                 // garbage-collected; let's take the opportunity to
-                // clean up the cursors list anyway..
+                // clean up the cursors list anyway.
                 it.remove();
             } else if (cur == cursor) {
                 ref.clear();
@@ -392,6 +392,8 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
     /**
      * An extended {@code ListIterator} that allows concurrent changes to
      * the underlying list.
+     *
+     * @param <E> the type of elements in this cursor.
      */
     public static class Cursor<E> extends AbstractLinkedList.LinkedListIterator<E> {
         /** Is the cursor valid (not closed) */
@@ -562,6 +564,7 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
     /**
      * A cursor for the sublist based on LinkedSubListIterator.
      *
+     * @param <E> the type of elements in this cursor.
      * @since 3.2
      */
     protected static class SubCursor<E> extends Cursor<E> {

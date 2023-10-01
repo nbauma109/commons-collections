@@ -41,11 +41,12 @@ import java.util.Queue;
  * this case the class will function as an empty iterator.
  * <p>
  * NOTE: As from version 4.0, the IteratorChain stores the iterators in a queue
- * and removes any reference to them as soon as they are not used anymore. Thus
+ * and removes any reference to them as soon as they are not used anymore. Thus,
  * the methods {@code setIterator(Iterator)} and {@code getIterators()} have been
  * removed and {@link #size()} will return the number of remaining iterators in
  * the queue.
  *
+ * @param <E> the type of elements in this iterator.
  * @since 2.1
  */
 public class IteratorChain<E> implements Iterator<E> {

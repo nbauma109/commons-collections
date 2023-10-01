@@ -16,27 +16,30 @@
  */
 package org.apache.commons.collections4.bloomfilter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+public class IndexProducerFromSparseBloomFilterTest extends AbstractIndexProducerTest {
 
-import org.junit.jupiter.api.Test;
+    protected Shape shape = Shape.fromKM(17, 72);
 
-/**
- * Tests for the {@link SimpleBloomFilter}.
- */
-public class SimpleBloomFilterTest extends AbstractBloomFilterTest<SimpleBloomFilter> {
     @Override
-    protected SimpleBloomFilter createEmptyFilter(final Shape shape) {
-        return new SimpleBloomFilter(shape);
+    protected IndexProducer createProducer() {
+        final Hasher hasher = new IncrementingHasher(4, 7);
+        final BloomFilter bf = new SparseBloomFilter(shape);
+        bf.merge(hasher);
+        return bf;
     }
 
-    @Test
-    public void testMergeShortBitMapProducer() {
-        final SimpleBloomFilter filter = createEmptyFilter(getTestShape());
-        // create a producer that returns too few values
-        // shape expects 2 longs we are sending 1.
-        final BitMapProducer producer = p -> p.test(2L);
-        assertTrue(filter.merge(producer));
-        assertEquals(1, filter.cardinality());
+    @Override
+    protected IndexProducer createEmptyProducer() {
+        return new SparseBloomFilter(shape);
+    }
+
+    @Override
+    protected int[] getExpectedIndices() {
+        return new int[] {2, 4, 9, 11, 16, 18, 23, 25, 30, 32, 37, 39, 44, 46, 53, 60, 67};
+    }
+
+    @Override
+    protected int getAsIndexArrayBehaviour() {
+        return DISTINCT |ORDERED;
     }
 }

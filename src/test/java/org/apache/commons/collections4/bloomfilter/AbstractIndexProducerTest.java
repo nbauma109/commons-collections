@@ -16,6 +16,7 @@
  */
 package org.apache.commons.collections4.bloomfilter;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -151,7 +152,7 @@ public abstract class AbstractIndexProducerTest {
     @Test
     public final void testEmptyProducer() {
         final IndexProducer empty = createEmptyProducer();
-        final int ary[] = empty.asIndexArray();
+        final int[] ary = empty.asIndexArray();
         assertEquals(0, ary.length);
         assertTrue(empty.forEachIndex(i -> {
             throw new AssertionError("forEach predictate should not be called");
@@ -244,5 +245,11 @@ public abstract class AbstractIndexProducerTest {
             return false;
         }));
         assertEquals(0, passes[0]);
+    }
+
+    @Test
+    public void testUniqueReturnsSelf() {
+        final IndexProducer expected = createProducer().uniqueIndices();
+        assertSame(expected, expected.uniqueIndices());
     }
 }

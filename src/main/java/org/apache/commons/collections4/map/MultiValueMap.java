@@ -134,7 +134,7 @@ public class MultiValueMap<K, V> extends AbstractMapDecorator<K, Object> impleme
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public MultiValueMap() {
-        this(new HashMap<K, V>(), new ReflectionFactory(ArrayList.class));
+        this(new HashMap<>(), new ReflectionFactory(ArrayList.class));
     }
 
     /**
@@ -252,7 +252,7 @@ public class MultiValueMap<K, V> extends AbstractMapDecorator<K, Object> impleme
      * Adds the value to the collection associated with the specified key.
      * <p>
      * Unlike a normal {@code Map} the previous value is not replaced.
-     * Instead the new value is added to the collection stored against the key.
+     * Instead, the new value is added to the collection stored against the key.
      *
      * @param key  the key to store against
      * @param value  the value to add to the collection at the key

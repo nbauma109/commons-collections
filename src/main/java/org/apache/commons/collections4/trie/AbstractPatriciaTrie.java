@@ -34,14 +34,17 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import org.apache.commons.collections4.OrderedMapIterator;
+import org.apache.commons.collections4.Trie;
 
 /**
  * This class implements the base PATRICIA algorithm and everything that
  * is related to the {@link Map} interface.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 4.0
  */
-abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
+public abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
     private static final long serialVersionUID = 5155253417231339498L;
 
@@ -66,6 +69,11 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
      */
     protected transient int modCount;
 
+    /**
+     * Constructs a new {@link Trie} using the given {@link KeyAnalyzer}.
+     *
+     * @param keyAnalyzer  the {@link KeyAnalyzer} to use
+     */
     protected AbstractPatriciaTrie(final KeyAnalyzer<? super K> keyAnalyzer) {
         super(keyAnalyzer);
     }
@@ -1426,7 +1434,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         /**
          * An {@link Iterator} that returns {@link Entry} Objects.
          */
-        private class EntryIterator extends TrieIterator<Map.Entry<K, V>> {
+        private class EntryIterator extends AbstractTrieIterator<Map.Entry<K, V>> {
             @Override
             public Map.Entry<K, V> next() {
                 return nextEntry();
@@ -1469,7 +1477,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         /**
          * An {@link Iterator} that returns Key Objects.
          */
-        private class KeyIterator extends TrieIterator<K> {
+        private class KeyIterator extends AbstractTrieIterator<K> {
             @Override
             public K next() {
                 return nextEntry().getKey();
@@ -1517,7 +1525,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         /**
          * An {@link Iterator} that returns Value Objects.
          */
-        private class ValueIterator extends TrieIterator<V> {
+        private class ValueIterator extends AbstractTrieIterator<V> {
             @Override
             public V next() {
                 return nextEntry().getValue();
@@ -1528,7 +1536,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     /**
      * An iterator for the entries.
      */
-    abstract class TrieIterator<E> implements Iterator<E> {
+    abstract class AbstractTrieIterator<E> implements Iterator<E> {
 
         /** For fast-fail. */
         protected int expectedModCount = AbstractPatriciaTrie.this.modCount;
@@ -1539,14 +1547,14 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         /**
          * Starts iteration from the root.
          */
-        protected TrieIterator() {
+        protected AbstractTrieIterator() {
             next = AbstractPatriciaTrie.this.nextEntry(null);
         }
 
         /**
          * Starts iteration at the given entry.
          */
-        protected TrieIterator(final TrieEntry<K, V> firstEntry) {
+        protected AbstractTrieIterator(final TrieEntry<K, V> firstEntry) {
             next = firstEntry;
         }
 
@@ -1601,7 +1609,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     /**
      * An {@link OrderedMapIterator} for a {@link org.apache.commons.collections4.Trie}.
      */
-    private class TrieMapIterator extends TrieIterator<K> implements OrderedMapIterator<K, V> {
+    private class TrieMapIterator extends AbstractTrieIterator<K> implements OrderedMapIterator<K, V> {
 
         protected TrieEntry<K, V> previous; // the previous node to return
 
@@ -1672,14 +1680,14 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     /**
      * A range view of the {@link org.apache.commons.collections4.Trie}.
      */
-    private abstract class RangeMap extends AbstractMap<K, V>
+    private abstract class AbstractRangeMap extends AbstractMap<K, V>
             implements SortedMap<K, V> {
 
         /** The {@link #entrySet()} view. */
         private transient volatile Set<Map.Entry<K, V>> entrySet;
 
         /**
-         * Creates and returns an {@link #entrySet()} view of the {@link RangeMap}.
+         * Creates and returns an {@link #entrySet()} view of the {@link AbstractRangeMap}.
          */
         protected abstract Set<Map.Entry<K, V>> createEntrySet();
 
@@ -1801,7 +1809,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         }
 
         /**
-         * Returns true if the provided key is in the FROM range of the {@link RangeMap}.
+         * Returns true if the provided key is in the FROM range of the {@link AbstractRangeMap}.
          */
         protected boolean inFromRange(final K key, final boolean forceInclusive) {
             final K fromKey = getFromKey();
@@ -1815,7 +1823,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         }
 
         /**
-         * Returns true if the provided key is in the TO range of the {@link RangeMap}.
+         * Returns true if the provided key is in the TO range of the {@link AbstractRangeMap}.
          */
         protected boolean inToRange(final K key, final boolean forceInclusive) {
             final K toKey = getToKey();
@@ -1829,16 +1837,16 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         }
 
         /**
-         * Creates and returns a sub-range view of the current {@link RangeMap}.
+         * Creates and returns a sub-range view of the current {@link AbstractRangeMap}.
          */
         protected abstract SortedMap<K, V> createRangeMap(K fromKey, boolean fromInclusive,
                                                           K toKey, boolean toInclusive);
     }
 
     /**
-     * A {@link RangeMap} that deals with {@link Entry}s.
+     * A {@link AbstractRangeMap} that deals with {@link Entry}s.
      */
-    private class RangeEntryMap extends RangeMap {
+    private class RangeEntryMap extends AbstractRangeMap {
 
         /** The key to start from, null if the beginning. */
         private final K fromKey;
@@ -1953,11 +1961,11 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     }
 
     /**
-     * A {@link Set} view of a {@link RangeMap}.
+     * A {@link Set} view of a {@link AbstractRangeMap}.
      */
     private class RangeEntrySet extends AbstractSet<Map.Entry<K, V>> {
 
-        private final RangeMap delegate;
+        private final AbstractRangeMap delegate;
 
         private transient int size = -1;
 
@@ -1966,7 +1974,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         /**
          * Creates a {@link RangeEntrySet}.
          */
-        RangeEntrySet(final RangeMap delegate) {
+        RangeEntrySet(final AbstractRangeMap delegate) {
             this.delegate = Objects.requireNonNull(delegate, "delegate");
         }
 
@@ -2050,7 +2058,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         /**
          * An {@link Iterator} for {@link RangeEntrySet}s.
          */
-        private final class EntryIterator extends TrieIterator<Map.Entry<K, V>> {
+        private final class EntryIterator extends AbstractTrieIterator<Map.Entry<K, V>> {
 
             private final K excludedKey;
 
@@ -2080,7 +2088,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     /**
      * A submap used for prefix views over the {@link org.apache.commons.collections4.Trie}.
      */
-    private class PrefixRangeMap extends RangeMap {
+    private class PrefixRangeMap extends AbstractRangeMap {
 
         private final K prefix;
 
@@ -2345,7 +2353,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         /**
          * An {@link Iterator} for iterating over a prefix search.
          */
-        private final class EntryIterator extends TrieIterator<Map.Entry<K, V>> {
+        private final class EntryIterator extends AbstractTrieIterator<Map.Entry<K, V>> {
 
             // values to reset the subtree if we remove it.
             private final K prefix;
